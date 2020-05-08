@@ -39,6 +39,15 @@ module cpu6_datapath (
 
    wire branch;
    wire zero;
+
+
+// IFID pipeline should not be here   
+//   wire [`CPU6_XLEN-1:0] pcD;
+//   wire [`CPU6_XLEN-1:0] instrD;
+//   
+//   cpu6_pipelinereg_d pipelinereg_d (clk, reset,
+//      pc, instr,
+//      pcD, instrD);
    
 
    // decode imm
@@ -49,6 +58,7 @@ module cpu6_datapath (
    
    // next PC logic
    cpu6_dffr#(`CPU6_XLEN) pcreg(pcnext, pc, clk, reset);
+   
    cpu6_adder pcadd1(pc, 32'b100, pcplus4); // next pc if no branch, no jump
    cpu6_sl1 immsh(signimm, signimmsh);
    // risc-v counts begin at the current branch instruction
