@@ -74,8 +74,11 @@
 `define CPU6_BRANCHTYPE_SIZE      3
 
 // BRANCHTYPE similar to funct3, use 3'b010 as nobranch
-`define CPU6_BRANCHTYPE_NOBRANCH  3'b010
+// need to make NOBRANCH 000, because that's in the register pipeline
+//`define CPU6_BRANCHTYPE_NOBRANCH  3'b010
+`define CPU6_BRANCHTYPE_NOBRANCH  3'b000
 
-`define CPU6_BRANCHTYPE_BEQ       3'b000
+//`define CPU6_BRANCHTYPE_BEQ       3'b000
+`define CPU6_BRANCHTYPE_BEQ       3'b010
 `define CPU6_BRANCHTYPE_BNE       3'b001
 // ...

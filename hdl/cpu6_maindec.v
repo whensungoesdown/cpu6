@@ -60,6 +60,10 @@ module cpu6_maindec (
    wire funct7_0100000 = (funct7 == `CPU6_FUNCT7_SIZE'b0100000);
    // ...
 
+   // all 0, invalid instruction, when flash pipeline
+   // because CPU6_BRANCHTYPE_NOBRANCH is actually 010
+   // Make sure no memory write, no register write, no branch, no jump
+   //wire rv32_invalid = (op == `CPU6_OPCODE_SIZE'b0000000);
 
    wire rv32_lw = (op == `CPU6_OPCODE_SIZE'b0000011);
    wire rv32_sw = (op == `CPU6_OPCODE_SIZE'b0100011);
@@ -74,6 +78,17 @@ module cpu6_maindec (
    
    wire rv32_jalr = (op == `CPU6_OPCODE_SIZE'b01100111) & funct3_000; // jalr i-type
    //wire rv32_jal = (op == `CPU6_OPCODE_SIZE'b01110011);
+   
+//   wire [`MAINDEC_CONTROL_SIZE-1:0] rv32_invalid_controls = {
+//				    1'b0, // memtoreg: no
+//				    1'b0, // memwrite: no
+//				    `CPU6_BRANCHTYPE_NOBRANCH, // branch: no
+//				    `MAINDEC_CONTROL_ALUSRC_IMM, // alusrc: imm
+//				    1'b0, // regwrite: yes
+//				    1'b0, // jump: no
+//				    `CPU6_ALU_OP_ADD, // aluop: add
+//				    `CPU6_IMMTYPE_R // immtype: CPU6_IMMTYPE_R 
+//				    };
 
    wire [`MAINDEC_CONTROL_SIZE-1:0] rv32_lw_controls = {
 				    1'b1, // memtoreg: yes
@@ -165,7 +180,8 @@ module cpu6_maindec (
 				    };
 
    
-   assign controls = ({`MAINDEC_CONTROL_SIZE{rv32_lw}} & rv32_lw_controls)
+   assign controls = //({`MAINDEC_CONTROL_SIZE{rv32_invalid}} & rv32_invalid_controls)
+                     ({`MAINDEC_CONTROL_SIZE{rv32_lw}} & rv32_lw_controls)
                    | ({`MAINDEC_CONTROL_SIZE{rv32_sw}} & rv32_sw_controls)
 		   | ({`MAINDEC_CONTROL_SIZE{rv32_addi}} & rv32_addi_controls)
 		   | ({`MAINDEC_CONTROL_SIZE{rv32_add}} & rv32_add_controls)
