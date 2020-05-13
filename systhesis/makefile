@@ -22,6 +22,7 @@ SOURCE_FILES = ../hdl/defines.v ../hdl/cpu6_core.v \
 		../hdl/cpu6_branchdec.v \
 		../hdl/cpu6_pipelinereg_ifid.v \
 		../hdl/cpu6_pipelinereg_idex.v \
+		../hdl/cpu6_hazardcontrol.v \
 		../hdl/top.v \
 		../testbenches/pseudo_icache.v
 

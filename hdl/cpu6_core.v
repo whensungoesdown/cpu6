@@ -43,9 +43,16 @@ module cpu6_core (
    wire [`CPU6_XLEN-1:0] pcnextE;
    wire pcsrcE;
 
+
+   wire stallF;
+   wire flashE;
+
+   cpu6_hazardcontrol hazardcontrol(branchtype, jump, branchtypeE, jumpE, pcsrcE,
+      stallF, flashE);
+   
    // if it's branch instruction, but the branch is not taken, pcsrcE still be 0
    //wire stallF = (((branchtype != `CPU6_BRANCHTYPE_NOBRANCH) | jump) & !pcsrcE);
-   wire stallF = (((branchtype != `CPU6_BRANCHTYPE_NOBRANCH) | jump) & !pcsrcE);
+   //wire stallF = (((branchtype != `CPU6_BRANCHTYPE_NOBRANCH) | jump) & !pcsrcE);
    
    cpu6_dfflr#(`CPU6_XLEN) pcreg(!stallF, pcnextF, pcF, clk, reset);
    
@@ -60,7 +67,7 @@ module cpu6_core (
 		     alucontrol, immtype);
 
    
-   wire flashE = (((branchtypeE != `CPU6_BRANCHTYPE_NOBRANCH) | jumpE));
+   //wire flashE = (((branchtypeE != `CPU6_BRANCHTYPE_NOBRANCH) | jumpE));
    //
    // currently, it's 2 stages pipeline
    // Need to flashE, but not by using reset, reset will even flash 
