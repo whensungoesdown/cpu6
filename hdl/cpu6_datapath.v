@@ -39,9 +39,10 @@ module cpu6_datapath (
    wire [`CPU6_XLEN-1:0] rs1E;  // should be D, later
    wire [`CPU6_XLEN-1:0] rs2E;
    wire [`CPU6_XLEN-1:0] rs2_immE; // should be D, later
-   
-   wire [`CPU6_XLEN-1:0] forwardrs1E;
-   wire [`CPU6_XLEN-1:0] forwardrs2E;
+   wire [`CPU6_XLEN-1:0] forwardrs1_rs1E;
+   wire [`CPU6_XLEN-1:0] forwardrs2_rs2E;
+   wire rs1forwardE;
+   wire rs2forwardE;
 
    wire branchE;
    wire zeroE;
@@ -103,9 +104,27 @@ module cpu6_datapath (
                    regwriteM,
 		   writeregM, rdM,
 		   clk, reset);
+
+
+
+
+
+   cpu6_hazardunit hazardunit(instrE[`CPU6_RS1_HIGH:`CPU6_RS1_LOW],
+                              instrE[`CPU6_RS2_HIGH:`CPU6_RS2_LOW],
+                              writeregM,
+                              regwriteM,
+                              rs1forwardE,
+                              rs2forwardE);
+
+   
+
+   // now we only have forwarded value from MEM, no WB stage
+   cpu6_mux2#(`CPU6_XLEN) forwardrs1mux(rs1E, rdM, rs1forwardE, forwardrs1_rs1E);
+   cpu6_mux2#(`CPU6_XLEN) forwardrs2mux(rs2E, rdM, rs2forwardE, forwardrs2_rs2E);
    
    // SW: rs2 contains data to write to memory
-   assign writedataE = rs2E;
+   //assign writedataE = rs2E;
+   assign writedataE = forwardrs2_rs2E;
    
    // rd <-- mem/reg
    // when write to rs2?
@@ -121,8 +140,10 @@ module cpu6_datapath (
    //cpu6_signext se(instr[`CPU6_IMM_HIGH:`CPU6_IMM_LOW], signimm);
 
    // ALU logic
-   cpu6_mux2#(`CPU6_XLEN) srcbmux(rs2E, signimmE, alusrcE, rs2_immE);
-   cpu6_alu alu(rs1E, rs2_immE, alucontrolE, aluoutE, zeroE);
+   //cpu6_mux2#(`CPU6_XLEN) srcbmux(rs2E, signimmE, alusrcE, rs2_immE);
+   //cpu6_alu alu(rs1E, rs2_immE, alucontrolE, aluoutE, zeroE);
+   cpu6_mux2#(`CPU6_XLEN) srcbmux(forwardrs2_rs2E, signimmE, alusrcE, rs2_immE);
+   cpu6_alu alu(forwardrs1_rs1E, rs2_immE, alucontrolE, aluoutE, zeroE);
 	
 
 
