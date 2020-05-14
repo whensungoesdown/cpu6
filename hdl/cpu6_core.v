@@ -7,7 +7,7 @@ module cpu6_core (
 		  output [`CPU6_XLEN-1:0] pcF,
 		  input  [`CPU6_XLEN-1:0] instr,
                   // write back to memory
-		  output memwriteE,
+		  output memwriteM,
 		  output [`CPU6_XLEN-1:0] dataaddr,
 		  output [`CPU6_XLEN-1:0] writedata,
                   // fetch data
@@ -25,7 +25,8 @@ module cpu6_core (
 
    wire [`CPU6_ALU_CONTROL_SIZE-1:0] alucontrol;
    wire [`CPU6_IMMTYPE_SIZE-1:0] immtype;
-   
+
+   wire memwriteE;
    wire memtoregE;
    wire [`CPU6_BRANCHTYPE_SIZE-1:0] branchtypeE;
    wire alusrcE;
@@ -46,13 +47,11 @@ module cpu6_core (
 
    wire stallF;
    wire flashE;
+   wire flashM;
 
    cpu6_hazardcontrol hazardcontrol(branchtype, jump, branchtypeE, jumpE, pcsrcE,
-      stallF, flashE);
+      stallF, flashE, flashM);
    
-   // if it's branch instruction, but the branch is not taken, pcsrcE still be 0
-   //wire stallF = (((branchtype != `CPU6_BRANCHTYPE_NOBRANCH) | jump) & !pcsrcE);
-   //wire stallF = (((branchtype != `CPU6_BRANCHTYPE_NOBRANCH) | jump) & !pcsrcE);
    
    cpu6_dfflr#(`CPU6_XLEN) pcreg(!stallF, pcnextF, pcF, clk, reset);
    
@@ -67,7 +66,6 @@ module cpu6_core (
 		     alucontrol, immtype);
 
    
-   //wire flashE = (((branchtypeE != `CPU6_BRANCHTYPE_NOBRANCH) | jumpE));
    //
    // currently, it's 2 stages pipeline
    // Need to flashE, but not by using reset, reset will even flash 
@@ -75,7 +73,7 @@ module cpu6_core (
    // If no flash pipelinereg_idex, this branch instruction will go through the pipeline
    // twice, so it will branch twice, then the following instruction will also be
    // executed twice.
-   // So, need flashE, but not by reset, set an flash signal, it makes 0s into
+   // So, need flashE, but not by reset, set an flash signal, it makes a bubble into
    // pipeline_idex in the next clock cycle.
    //
    cpu6_pipelinereg_idex pipelinereg_idex(clk, reset,
@@ -87,8 +85,8 @@ module cpu6_core (
       memtoregE, branchtypeE, alusrcE, regwriteE, jumpE, alucontrolE, immtypeE,
       pcE, instrE);
   
-   cpu6_datapath dp(clk, reset, memtoregE, branchtypeE,
+   cpu6_datapath dp(clk, reset, memwriteE, memtoregE, branchtypeE,
 		    alusrcE, regwriteE, jumpE,
 		    alucontrolE, immtypeE, pcE, pcnextE, pcsrcE, instrE,
-		    dataaddr, writedata, readdata);
+		    dataaddr, writedata, readdata, memwriteM, flashM);
 endmodule   

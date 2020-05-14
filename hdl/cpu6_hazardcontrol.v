@@ -7,10 +7,12 @@ module cpu6_hazardcontrol (
    input  jumpE,
    input  pcsrcE,
    output stallF,
-   output flashE
+   output flashE,
+   output flashM
    );
  
    assign stallF = (((branchtype != `CPU6_BRANCHTYPE_NOBRANCH) | jump) & !pcsrcE);
    assign flashE = (((branchtypeE != `CPU6_BRANCHTYPE_NOBRANCH) | jumpE));
-
+   assign flashM = flashE;
+   
 endmodule // cpu6_hazardcontrol
