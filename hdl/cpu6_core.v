@@ -4,7 +4,7 @@ module cpu6_core (
 		  input  clk,
 		  input  reset,
    
-		  output [`CPU6_XLEN-1:0] pcF,
+		  output [`CPU6_XLEN-1:0] pcfetchaddr,
 		  input  [`CPU6_XLEN-1:0] instr,
                   // write back to memory
 		  output memwriteM,
@@ -39,6 +39,7 @@ module cpu6_core (
 
    wire [`CPU6_XLEN-1:0] pcplus4F;
    wire [`CPU6_XLEN-1:0] pcnextF;
+   wire [`CPU6_XLEN-1:0] pcF;
 
    wire [`CPU6_XLEN-1:0] pcE;
    wire [`CPU6_XLEN-1:0] pcnextE;
@@ -52,6 +53,8 @@ module cpu6_core (
    cpu6_hazardcontrol hazardcontrol(branchtype, jump, branchtypeE, jumpE, pcsrcE,
       stallF, flashE, flashM);
    
+
+   assign pcfetchaddr = ({`CPU6_XLEN{!reset}} & pcnextF);
    
    cpu6_dfflr#(`CPU6_XLEN) pcreg(!stallF, pcnextF, pcF, clk, reset);
    

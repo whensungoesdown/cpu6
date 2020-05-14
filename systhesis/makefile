@@ -26,6 +26,7 @@ SOURCE_FILES = ../hdl/defines.v ../hdl/cpu6_core.v \
 		../hdl/cpu6_hazardcontrol.v \
 		../hdl/cpu6_hazardunit.v \
 		../hdl/top.v \
+		../hdl/ram.v \
 		../testbenches/pseudo_icache.v
 
 SOURCE_FILES_PARAMETER = $(addprefix --source=, $(SOURCE_FILES))
