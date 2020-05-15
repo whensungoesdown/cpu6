@@ -160,7 +160,7 @@ module cpu6_datapath (
    
    
    
-   cpu6_pipelinereg_exmem pipelinereg_exmem(!clk, reset,
+   cpu6_pipelinereg_exmem pipelinereg_exmem(~clk, reset,
       1'b0, //flashM,
       memwriteE,
       writedataE,
