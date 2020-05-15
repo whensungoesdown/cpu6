@@ -65,7 +65,13 @@ module cpu6_datapath (
    wire jumpM;
    
    wire [`CPU6_XLEN-1:0] alu_memM;
-   wire [`CPU6_XLEN-1:0] rdM; // rdDM
+   wire [`CPU6_XLEN-1:0] rdM;
+
+
+   
+   wire [`CPU6_RFIDX_WIDTH-1:0] writeregW;
+   wire regwriteW;
+   wire [`CPU6_XLEN-1:0] rdW;
 
 
    
@@ -101,8 +107,8 @@ module cpu6_datapath (
    cpu6_regfile rf(instrE[`CPU6_RS1_HIGH:`CPU6_RS1_LOW],
                    instrE[`CPU6_RS2_HIGH:`CPU6_RS2_LOW],
                    rs1E, rs2E, 
-                   regwriteM,
-		   writeregM, rdM,
+                   regwriteW,
+		   writeregW, rdW,
 		   clk, reset);
 
 
@@ -154,7 +160,7 @@ module cpu6_datapath (
    
    
    
-   cpu6_pipelinereg_exmem pipelinereg_exmem(clk, reset,
+   cpu6_pipelinereg_exmem pipelinereg_exmem(!clk, reset,
       1'b0, //flashM,
       memwriteE,
       writedataE,
@@ -195,4 +201,22 @@ module cpu6_datapath (
    // if 1==jumpE, this is a jump instruction, pc+4=>rd
    // if 0==jumpE, rd either comes from alu (e.g add) or mem (LW instruction)
    cpu6_mux2#(`CPU6_XLEN) jumpmux(alu_memM, pcplus4M, jumpM, rdM);
+
+
+
+
+   
+//   
+//  pipeline MEMWB
+
+   cpu6_pipelinereg_memwb pipeline_memwb(~clk, reset,
+      1'b0,
+      regwriteM,
+      writeregM,
+      rdM,
+      regwriteW,
+      writeregW,
+      rdW);
+      
+//    
 endmodule // cpu6_datapath
