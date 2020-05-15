@@ -4,7 +4,7 @@ module cpu6_core (
 		  input  clk,
 		  input  reset,
    
-		  output [`CPU6_XLEN-1:0] pcfetchaddr,
+		  output [`CPU6_XLEN-1:0] fetchaddr,
 		  input  [`CPU6_XLEN-1:0] instr,
                   // write back to memory
 		  output memwriteM,
@@ -54,7 +54,8 @@ module cpu6_core (
       stallF, flashE, flashM);
    
 
-   assign pcfetchaddr = ({`CPU6_XLEN{!reset}} & pcnextF);
+   //assign pcfetchaddr = ({`CPU6_XLEN{!reset}} & pcnextF);
+   cpu6_mux2#(`CPU6_XLEN) fetchmux(({`CPU6_XLEN{!reset}} & pcnextF), pcF, stallF, fetchaddr);
    
    cpu6_dfflr#(`CPU6_XLEN) pcreg(!stallF, pcnextF, pcF, clk, reset);
    
