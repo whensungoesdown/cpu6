@@ -48,10 +48,9 @@ module cpu6_core (
 
    wire stallF;
    wire flashE;
-   wire flashM;
 
    cpu6_hazardcontrol hazardcontrol(branchtype, jump, branchtypeE, jumpE, pcsrcE,
-      stallF, flashE, flashM);
+      stallF, flashE);
    
 
    //assign pcfetchaddr = ({`CPU6_XLEN{!reset}} & pcnextF);
@@ -92,5 +91,5 @@ module cpu6_core (
    cpu6_datapath dp(clk, reset, memwriteE, memtoregE, branchtypeE,
 		    alusrcE, regwriteE, jumpE,
 		    alucontrolE, immtypeE, pcE, pcnextE, pcsrcE, instrE,
-		    dataaddr, writedata, readdata, memwriteM, flashM);
+		    dataaddr, writedata, readdata, memwriteM);
 endmodule   

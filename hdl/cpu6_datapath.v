@@ -18,8 +18,7 @@ module cpu6_datapath (
 		      output [`CPU6_XLEN-1:0] dataaddrM,
 		      output [`CPU6_XLEN-1:0] writedataM,
 		      input  [`CPU6_XLEN-1:0] readdataM,
-                      output memwriteM,
-                      input  flashM
+                      output memwriteM
 		      );
 
    wire [`CPU6_XLEN-1:0] aluoutE;
@@ -161,7 +160,7 @@ module cpu6_datapath (
    
    
    cpu6_pipelinereg_exmem pipelinereg_exmem(~clk, reset,
-      1'b0, //flashM,
+      1'b0,
       memwriteE,
       writedataE,
       aluoutE, // used in MEM, but also pass to WB
