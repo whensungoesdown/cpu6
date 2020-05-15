@@ -1,7 +1,7 @@
 `include "defines.v"
 
 // Modelsim-ASE requires a timescale directive
-//`timescale 1 ns / 1 ns
+`timescale 1 ns / 1 ns
 
 // Verilog module DFF with Load-enable, no reset	
 
@@ -16,8 +16,7 @@ module cpu6_dffl # ( parameter DW = 32) (
 	always @(posedge clk)
 	begin : dffl_proc
 		if (lden == 1'b1)
-			//qout_r <= #1 dnxt;
-			qout_r <= dnxt;
+			qout_r <= #1 dnxt;
 	end
 	
 	assign qout = qout_r;
@@ -38,8 +37,7 @@ module cpu6_dfflr # ( parameter DW = 32) (
 		if (rst == 1'b1)
 			qout_r <= {DW{1'b0}};
 		else if (lden == 1'b1)
-			//qout_r <= #1 dnxt;
-			qout_r <= dnxt;
+			qout_r <= #1 dnxt;
 	end
 	
 	assign qout = qout_r;
@@ -61,8 +59,7 @@ begin : DFFR_PROC
 	if (rst == 1'b1)
 		qout_r <= {DW{1'b0}};
 	else
-		//qout_r <= #1 dnxt;
-		qout_r <= dnxt;
+		qout_r <= #1 dnxt;
 end
 
 assign qout = qout_r;
