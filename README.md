@@ -1,6 +1,12 @@
-# cpu5
+# cpu6
 
-A simple single cycle RISC-V 32I CPU
+A simple 4-stage pipeline RISC-V 32I CPU
+
+
+### IFID  EX  MEM  WB  4-stage pipeline
+
+no cache, altera 2-port RAM
+
 
 The following instructions are implemented
 
